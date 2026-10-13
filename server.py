@@ -36,7 +36,7 @@ APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
 KEEP_BACKUPS = 60            # itne din ke backup rakhe jayenge
 MAX_BODY = 25 * 1024 * 1024  # 25 MB
 
-os.makedirs(BACKUP_DIR, exist_ok=True)
+BACKUP_DIR = "/tmp/kinja_data"
 _tlock = threading.Lock()
 
 
