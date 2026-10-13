@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kinja Associates</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f6f8;--card:#fff;--tx:#1c2430;--mu:#6b7685;--br:#e1e5eb;--pr:#1d4e89;--ok:#1b8a5a;--bad:#c0392b;--wa:#b7791f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1b212a;--tx:#e8ecf1;--mu:#93a0b0;--br:#2b3440;--pr:#5b9bd5;--ok:#3fbf8a;--bad:#e06c5f;--wa:#e0a84a}}
+:root[data-theme="dark"]{--bg:#12161c;--card:#1b212a;--tx:#e8ecf1;--mu:#93a0b0;--br:#2b3440;--pr:#5b9bd5;--ok:#3fbf8a;--bad:#e06c5f;--wa:#e0a84a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--pr);color:#fff;padding:14px 16px}header h1{margin:0;font-size:20px}header small{opacity:.85}
+nav{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--br);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+nav button{border:0;background:none;color:var(--mu);padding:8px 14px;border-radius:20px;font-size:14px;white-space:nowrap;cursor:pointer}
+nav button.on{background:var(--pr);color:#fff}
+main{max-width:900px;margin:0 auto;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--br);border-radius:12px;padding:14px;margin-bottom:12px}
+.stat b{display:block;font-size:22px}.stat span{color:var(--mu);font-size:13px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.btn{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:9px 14px;cursor:pointer;font:inherit}
+.sm{padding:4px 9px;font-size:12px;background:none;color:var(--pr);border:1px solid var(--br)}
+.del{color:var(--bad)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--br)}
+.row:first-child{border-top:0}.mu{color:var(--mu);font-size:13px}
+.tag{font-size:12px;padding:2px 8px;border-radius:10px;border:1px solid var(--br)}
+.in{color:var(--ok)}.out{color:var(--bad)}.over{color:var(--bad)}
+h2{font-size:17px;margin:4px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}th,td{text-align:left;padding:8px 6px;border-top:1px solid var(--br);vertical-align:top}th{color:var(--mu);font-weight:600;border-top:0}tfoot td{font-weight:700;border-top:2px solid var(--br)}.p-High{color:var(--bad)}.p-Medium{color:var(--wa)}.p-Low{color:var(--mu)}
+.empty{color:var(--mu);text-align:center;padding:16px}
+@media (min-width:900px){header{position:sticky;top:0;z-index:6;padding:16px 32px}header h1{font-size:24px}
+nav{position:fixed;left:0;top:72px;bottom:0;width:210px;flex-direction:column;gap:4px;padding:16px 12px;border-right:1px solid var(--br);border-bottom:0;overflow-y:auto}
+nav button{text-align:left;border-radius:8px;font-size:15px;padding:11px 14px}
+main{max-width:none;margin:0 0 0 210px;padding:24px 36px}
+.grid{grid-template-columns:repeat(3,1fr)}table{min-width:0;font-size:14px}.card{padding:18px}}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}@media(max-width:800px){.board{grid-template-columns:1fr}}
+.box{background:var(--card);border:1px solid var(--br);border-top:5px solid;border-radius:12px;padding:12px}.box.pend{border-top-color:var(--wa)}.box.dn{border-top-color:var(--ok)}.box .sc{max-height:68vh;overflow:auto}
+.tk{border:1px solid var(--br);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg)}.tk.ov{border-color:var(--bad)}
+#rc th,#rc td{color:#000}#rc table{border-collapse:collapse}#rc td,#rc th{border-top:1px solid #999;padding:6px}
+header{display:flex;gap:12px;align-items:center;flex-wrap:wrap}#gs{position:relative;flex:1;min-width:240px;max-width:460px;margin-left:auto}#gs input{background:#fff;color:#1c2430}
+#gsl{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--card);color:var(--tx);border:1px solid var(--br);border-radius:10px;max-height:320px;overflow:auto;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.25)}.gsi{padding:9px 12px;cursor:pointer;border-top:1px solid var(--br)}.gsi:first-child{border-top:0}.gsi:hover{background:var(--bg)}
+.rctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.rctl select,.rctl input{width:auto;min-width:150px}
+.grid .stat{color:#fff;border:0;box-shadow:0 3px 10px rgba(0,0,0,.15)}.grid .stat b,.grid .stat span,.grid .stat div{color:#fff!important}
+.grid .stat:nth-child(9n+1){background:linear-gradient(135deg,#667eea,#764ba2)}.grid .stat:nth-child(9n+2){background:linear-gradient(135deg,#f6819b,#f5576c)}.grid .stat:nth-child(9n+3){background:linear-gradient(135deg,#4facfe,#0083b0)}.grid .stat:nth-child(9n+4){background:linear-gradient(135deg,#f7971e,#e65c00)}.grid .stat:nth-child(9n+5){background:linear-gradient(135deg,#11998e,#2ecc71)}.grid .stat:nth-child(9n+6){background:linear-gradient(135deg,#8e2de2,#4a00e0)}.grid .stat:nth-child(9n+7){background:linear-gradient(135deg,#ee0979,#ff6a00)}.grid .stat:nth-child(9n+8){background:linear-gradient(135deg,#0f9b8e,#1e6fd9)}.grid .stat:nth-child(9n){background:linear-gradient(135deg,#c0392b,#e67e22)}
+.board3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}@media(max-width:1000px){.board3{grid-template-columns:1fr}}
+.box.pend{border-top-color:#f59e0b;background:linear-gradient(180deg,rgba(245,158,11,.18),var(--card) 90px)}.box.prog{border-top-color:#3b82f6;background:linear-gradient(180deg,rgba(59,130,246,.18),var(--card) 90px)}.box.dn{border-top-color:#22c55e;background:linear-gradient(180deg,rgba(34,197,94,.18),var(--card) 90px)}
+.board>.card:nth-child(1){border-top:4px solid #ef4444;background:linear-gradient(180deg,rgba(239,68,68,.13),var(--card) 80px)}.board>.card:nth-child(2){border-top:4px solid #8b5cf6;background:linear-gradient(180deg,rgba(139,92,246,.13),var(--card) 80px)}
+@media print{body *{visibility:hidden}#rc,#rc *{visibility:visible}#rc{position:absolute;left:0;top:0;width:100%;padding:20px}}
+#rc{display:none}#rc.show{display:block}
+table.n345 th:nth-child(n+3),table.n345 td:nth-child(n+3){text-align:right;white-space:nowrap}
+table.n5678 th:nth-child(n+5),table.n5678 td:nth-child(n+5){text-align:right;white-space:nowrap}
+table.n567 th:nth-child(n+5):not(:last-child),table.n567 td:nth-child(n+5):not(:last-child){text-align:right;white-space:nowrap}
+table.rt th.r,table.rt td.r{text-align:right;white-space:nowrap}
+</style></head><body>
+<header><div><h1>Kinja Associates</h1><small>Chartered Accountants &amp; Tax Consultants</small> <small style="opacity:.7">· Version 6</small></div><div id="gs"><input id="gsq" placeholder="🔍 Party search (naam / PAN / GST / phone)" oninput="gsr(this.value)" autocomplete="off"><div id="gsl"></div></div></header>
+<nav id="nav"></nav>
+<main id="v"></main>
+<div id="rc"></div>
+<script>
+var D={clients:[],tasks:[],txns:[],inv:[],set:{},banks:[],svcs:[]},tab='Dashboard',q='';
+
+var VER=0,chain=Promise.resolve();
+function save(){chain=chain.then(function(){return fetch('/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ver:VER,data:D})}).then(function(r){
+ if(r.status==409){alert('Kisi aur computer ne data badla hai. Page refresh ho raha hai, apni entry dobara check karein.');return load()}
+ return r.json().then(function(j){VER=j.ver})}).catch(function(){alert('Server se connection nahi hai! Data SAVE NAHI hua.')})})}
+function load(){return fetch('/api/data',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){VER=j.ver;D=(j.data&&j.data.clients)?j.data:{clients:[],tasks:[],txns:[]};D.inv=D.inv||[];D.set=D.set||{};D.banks=D.banks||[];D.svcs=D.svcs||[];if(!D.svcs.length&&!D.svcSeeded){D.svcSeeded=1;D.svcs=['GST Return Filing','ITR Filing','TDS Return Filing','Audit / Tax Audit','ROC / Company Compliance','Accounting / Bookkeeping','Consultancy'].map(n=>({id:uid(),name:n,sac:'',amt:0,gst:18}))}render()}).catch(function(){})}
+setInterval(function(){var e=document.activeElement;if(e&&/INPUT|SELECT|TEXTAREA/.test(e.tagName))return;fetch('/api/ver',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j.ver!=VER)load()}).catch(function(){})},8000);
+function $(x){return document.getElementById(x)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function inr(n){return '₹'+Number(n||0).toLocaleString('en-IN')}
+function today(){return new Date().toISOString().slice(0,10)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function cname(id){var c=D.clients.find(function(x){return x.id==id});return c?c.name:'—'}
+function copts(){return D.clients.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>'}).join('')}
+var tabs=['Dashboard','Clients','Tasks','Invoices','Ledger','Receipts','Payments','Cash-Bank','Reports','Automation','Settings'];
+function nav(){$('nav').innerHTML=tabs.map(function(t){return '<button class="'+(t==tab?'on':'')+'" onclick="go(\''+t+'\')">'+t.replace('-',' &amp; ')+'</button>'}).join('')}
+function go(t){tab=t;q='';nav();render()}
+function render(){
+ var h='';
+ if(tab=='Dashboard'){
+  var rec=0,pay=0;D.txns.forEach(function(t){t.type=='Receipt'?rec+=+t.amt:pay+=+t.amt});
+  var pend=D.tasks.filter(function(t){return t.st!='Done'});
+  var od=pend.filter(function(t){return t.due&&t.due<today()});
+  h+='<div class="grid"><div class="card stat"><b>'+D.clients.length+'</b><span>Clients</span></div><div class="card stat"><b>'+pend.length+'</b><span>Pending tasks</span></div><div class="card stat"><b class="over">'+od.length+'</b><span>Overdue</span></div><div class="card stat"><b class="in">'+inr(rec)+'</b><span>Received</span></div><div class="card stat"><b class="out">'+inr(pay)+'</b><span>Paid out</span></div><div class="card stat"><b>'+inr(rec-pay)+'</b><span>Net balance</span></div><div class="card stat"><b>'+inr(tb())+'</b><span>Total billed (with GST)</span></div><div class="card stat"><b class="over">'+inr(tb()-rec)+'</b><span>Due balance</span></div><div class="card stat"><b>'+inr(tg())+'</b><span>GST on fees</span></div></div>';
+  h+='<div class="card"><h2>Upcoming tasks</h2>'+(pend.length?pend.sort(function(a,b){return (a.due||'9').localeCompare(b.due||'9')}).slice(0,6).map(function(t){return '<div class="row"><div>'+esc(t.title)+'<div class="mu">'+esc(cname(t.cid))+'</div></div><span class="'+(t.due&&t.due<today()?'over':'mu')+'">'+(t.due||'')+'</span></div>'}).join(''):'<div class="empty">Koi pending task nahi</div>')+'</div>';
+ }
+ if(tab=='Clients'){
+  h+='<div class="card"><h2>Naya client</h2><form onsubmit="return addC(event)"><input name="name" placeholder="Client name" required><input name="pan" placeholder="PAN" maxlength="10"><input name="gstin" placeholder="GST Number (15 digit)" maxlength="15" style="text-transform:uppercase" oninput="gstAuto(this)"><button type="button" class="btn" onclick="gstFill(this.form)">🔍 GST se details bharo</button><button type="button" class="btn" onclick="gstPaste(this.form)">📋 Portal ka result paste karo</button><input name="addr" placeholder="Address"><input type="hidden" name="gs"><input name="ph" placeholder="Phone"><input name="em" placeholder="Email"><select name="svc"><option>ITR Filing</option><option>GST</option><option>Audit</option><option>TDS</option><option>ROC / Company</option><option>Other</option></select><input name="fee" type="number" placeholder="Fee (₹)"><select name="gst"><option value="18">GST 18%</option><option value="12">GST 12%</option><option value="5">GST 5%</option><option value="0">No GST</option></select><button class="btn">Add</button></form></div>';
+  h+='<div class="card"><input placeholder="Search client..." value="'+esc(q)+'" oninput="q=this.value;list()"><div id="L"></div></div>';
+ }
+ if(tab=='Tasks'){
+  h+='<div class="card"><h2>Naya task</h2>'+(D.clients.length?'<form onsubmit="return addT(event)"><input name="title" placeholder="Task (e.g. GSTR-3B)" required><select name="cat"><option>GST</option><option>Income Tax</option><option>TDS</option><option>Audit</option><option>ROC</option><option>Other</option></select><select name="pri"><option>High</option><option selected>Medium</option><option>Low</option></select><select name="cid">'+copts()+'</select><input name="by" list="stf" placeholder="Kisko assign (naam)">'+stfDL()+'<input name="due" type="date"><input name="rem" placeholder="Remarks"><button class="btn">Add</button></form>':'<div class="empty">Pehle client add karein</div>')+'</div><div class="card" id="L"></div>';
+ }
+ if(tab=='Receipts'||tab=='Payments'){
+  var ty=tab=='Receipts'?'Receipt':'Payment';
+  h+='<div class="card"><h2>Nayi '+ty+' entry</h2><form onsubmit="return addX(event,\''+ty+'\')"><select name="cid">'+copts()+'</select><input name="amt" type="number" placeholder="Amount (₹)" required><input name="date" type="date" value="'+today()+'"><select name="mode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Cheque</option></select><select name="acc" title="Bank account">'+bopts()+'</select><input name="note" placeholder="Note / purpose"><button class="btn">Save</button></form></div><div class="card" id="L"></div>';
+ }
+ $('v').innerHTML=h;list();
+}
+function list(){
+ var L=$('L');if(!L)return;var h='';
+ if(tab=='Clients'){L.innerHTML=ctable();return}
+ if(tab=='Tasks'){L.innerHTML=ttable();return}
+ if(tab=='Clients'){
+  var a=D.clients.filter(function(c){return (c.name+c.pan).toLowerCase().indexOf(q.toLowerCase())>-1});
+  h=a.length?a.map(function(c){return '<div class="row"><div><b>'+esc(c.name)+'</b> <span class="tag">'+esc(c.svc)+'</span><div class="mu">PAN: '+esc(c.pan||'—').toUpperCase()+' · '+esc(c.ph)+' '+esc(c.em)+'</div><div class="mu">Fee: '+inr(c.fee)+' · Received: '+inr(bal(c.id))+'</div></div><button class="btn sm del" onclick="delC(\''+c.id+'\')">Delete</button></div>'}).join(''):'<div class="empty">Koi client nahi</div>';
+ }
+ if(tab=='Tasks'){
+  h=D.tasks.length?D.tasks.map(function(t){return '<div class="row"><div><b'+(t.st=='Done'?' style="text-decoration:line-through"':'')+'>'+esc(t.title)+'</b><div class="mu">'+esc(cname(t.cid))+' · <span class="'+(t.st!='Done'&&t.due&&t.due<today()?'over':'')+'">Due '+(t.due||'—')+'</span></div></div><div><button class="btn sm" onclick="cyc(\''+t.id+'\')">'+t.st+'</button> <button class="btn sm del" onclick="delT(\''+t.id+'\')">✕</button></div></div>'}).join(''):'<div class="empty">Koi task nahi</div>';
+ }
+ if(tab=='Receipts'||tab=='Payments'){
+  var ty=tab=='Receipts'?'Receipt':'Payment';
+  var a=D.txns.filter(function(t){return t.type==ty}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  h=a.length?a.map(function(t){return '<div class="row"><div><b class="'+(ty=='Receipt'?'in':'out')+'">'+inr(t.amt)+'</b> · '+esc(cname(t.cid))+'<div class="mu">'+t.date+' · '+esc(t.mode)+(t.mode!='Cash'&&t.acc?' ('+esc(bn(t.acc))+')':'')+' · '+esc(t.note)+' · #'+t.no+'</div></div><div><button class="btn sm" onclick="editX(\''+t.id+'\')">Edit</button> '+(ty=='Receipt'?'<button class="btn sm" onclick="prn(\''+t.id+'\')">Print</button> ':'')+'<button class="btn sm del" onclick="delX(\''+t.id+'\')">✕</button></div></div>'}).join(''):'<div class="empty">Koi entry nahi</div>';
+ }
+ L.innerHTML=h;
+}
+function gA(c){return Math.round((+c.fee||0)*(+(c.gst==null?18:c.gst))/100)}
+function tb(){return D.clients.reduce(function(s,c){return s+(+c.fee||0)+gA(c)},0)}
+function tg(){return D.clients.reduce(function(s,c){return s+gA(c)},0)}
+function pc(id){return D.tasks.filter(function(t){return t.cid==id&&t.st!='Done'}).length}
+function ctable(){
+ var a=D.clients.filter(function(c){return (c.name+(c.pan||'')+(c.gstin||'')).toLowerCase().indexOf(q.toLowerCase())>-1});
+ if(!a.length)return '<div class="empty">Koi client nahi</div>';
+ var F=0,G=0,B=0,R=0,P=0;
+ var r=a.map(function(c){var f=+c.fee||0,g=gA(c),b=f+g,rc=bal(c.id),d=b-rc,p=pc(c.id);F+=f;G+=g;B+=b;R+=rc;P+=p;
+ return '<tr><td><b>'+esc(c.name)+'</b><div class="mu">'+esc((c.pan||'').toUpperCase())+' '+esc(c.ph)+'</div></td><td>'+esc(c.svc)+'</td><td>'+inr(f)+'</td><td>'+inr(g)+' <span class="mu">('+(c.gst==null?18:c.gst)+'%)</span></td><td>'+inr(b)+'</td><td class="in">'+inr(rc)+'</td><td class="'+(d>0?'over':'in')+'"><b>'+inr(d)+'</b></td><td>'+p+'</td><td><button class="btn sm del" onclick="delC(\''+c.id+'\')">✕</button></td></tr>'}).join('');
+ return '<div style="overflow-x:auto"><table class="n5678"><thead><tr><th>Client</th><th>Service</th><th>Fee</th><th>Tax Component</th><th>Total</th><th>Received</th><th>Due Balance</th><th>Pending Tasks</th><th></th></tr></thead><tbody>'+r+'</tbody><tfoot><tr><td>Total</td><td></td><td>'+inr(F)+'</td><td>'+inr(G)+'</td><td>'+inr(B)+'</td><td>'+inr(R)+'</td><td>'+inr(B-R)+'</td><td>'+P+'</td><td></td></tr></tfoot></table></div>'}
+function ttable(){
+ if(!D.tasks.length)return '<div class="empty">Koi task nahi</div>';
+ var o={'Pending':0,'In Progress':1,'Done':2};
+ var a=D.tasks.slice().sort(function(x,y){return o[x.st]-o[y.st]||(x.due||'9').localeCompare(y.due||'9')});
+ var n=D.tasks.filter(function(t){return t.st!='Done'}).length;
+ var r=a.map(function(t){var ov=t.st!='Done'&&t.due&&t.due<today();
+ return '<tr><td'+(t.st=='Done'?' style="text-decoration:line-through"':'')+'><b>'+esc(t.title)+'</b></td><td>'+esc(cname(t.cid))+'</td><td>'+esc(t.cat||'—')+'</td><td class="p-'+esc(t.pri||'Medium')+'">'+esc(t.pri||'Medium')+'</td><td class="'+(ov?'over':'')+'">'+(t.due||'—')+(ov?' (overdue)':'')+'</td><td class="mu">'+esc(t.rem||'')+'</td><td><button class="btn sm" onclick="cyc(\''+t.id+'\')">'+t.st+'</button></td><td><button class="btn sm del" onclick="delT(\''+t.id+'\')">✕</button></td></tr>'}).join('');
+ return '<h2>Pending tasks: '+n+' / '+D.tasks.length+'</h2><div style="overflow-x:auto"><table><thead><tr><th>Task</th><th>Client</th><th>Tax Type</th><th>Priority</th><th>Due</th><th>Remarks</th><th>Status</th><th></th></tr></thead><tbody>'+r+'</tbody></table></div>'}
+function bal(id){return D.txns.filter(function(t){return t.cid==id&&t.type=='Receipt'}).reduce(function(s,t){return s+ +t.amt},0)}
+function fd(e){e.preventDefault();var o={};new FormData(e.target).forEach(function(v,k){o[k]=v});return o}
+function addC(e){var o=fd(e);o.id=uid();D.clients.push(o);save();render();return false}
+function addT(e){var o=fd(e);o.id=uid();o.st='Pending';D.tasks.push(o);save();render();return false}
+function addX(e,ty){var o=fd(e);if(!o.cid){alert('Pehle client add karein');return false}o.id=uid();o.type=ty;o.no=(ty=='Receipt'?'R':'P')+String(D.txns.filter(function(t){return t.type==ty}).length+1).padStart(3,'0');D.txns.push(o);save();render();return false}
+function cyc(id){var t=D.tasks.find(function(x){return x.id==id}),o=['Pending','In Progress','Done'];t.st=o[(o.indexOf(t.st)+1)%3];save();list()}
+function delC(id){if(confirm('Client delete karein?')){D.clients=D.clients.filter(function(x){return x.id!=id});save();render()}}
+function delT(id){D.tasks=D.tasks.filter(function(x){return x.id!=id});save();list()}
+function delX(id){if(confirm('Entry delete karein?')){D.txns=D.txns.filter(function(x){return x.id!=id});save();list()}}
+function prn(id){var t=D.txns.find(function(x){return x.id==id}),r=$('rc');
+ r.innerHTML='<div style="border:2px solid #000;padding:20px;color:#000;background:#fff"><h2 style="text-align:center;margin:0">KINJA ASSOCIATES</h2><p style="text-align:center;margin:0 0 16px">Chartered Accountants &amp; Tax Consultants</p><p style="text-align:center;margin:0 0 10px;font-size:13px">'+firmLine()+'</p><h3 style="text-align:center">PAYMENT RECEIPT</h3><p>Receipt No: <b>'+t.no+'</b> &nbsp; Date: <b>'+t.date+'</b></p><p>Received with thanks from <b>'+esc(cname(t.cid))+'</b></p><p>Amount: <b>'+inr(t.amt)+'</b> via '+esc(t.mode)+'</p><p>Towards: '+esc(t.note||'Professional fees')+'</p><p style="margin-top:50px;text-align:right">Authorised Signatory</p></div>';
+ r.className='show';try{window.print()}catch(e){alert('Print is browser mein available nahi, screenshot le lein')}setTimeout(function(){r.className=''},500)}
+/* ===== v2: Invoice, Ledger, Task boxes, Automation ===== */
+var lc='';
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function p3(n){return String(n).padStart(3,'0')}
+function fy(d){var y=+d.slice(0,4),m=+d.slice(5,7);return m>=4?y+'-'+String((y+1)%100).padStart(2,'0'):(y-1)+'-'+String(y%100).padStart(2,'0')}
+function invNo(d){var f=fy(d),n=D.inv.filter(i=>fy(i.date)==f).length+1;while(D.inv.some(i=>i.no=='KA/'+f+'/'+p3(n)))n++;return 'KA/'+f+'/'+p3(n)}
+function words(n){n=Math.round(n);if(!n)return 'Zero';var a='One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen'.split(' '),b=',,Twenty,Thirty,Forty,Fifty,Sixty,Seventy,Eighty,Ninety'.split(',');
+ function w(x){return x<20?(a[x-1]||''):b[Math.floor(x/10)]+(x%10?' '+a[x%10-1]:'')}
+ function t(x){return (x>99?a[Math.floor(x/100)-1]+' Hundred'+(x%100?' ':''):'')+(x%100?w(x%100):'')}
+ var r='',c=Math.floor(n/1e7),l=Math.floor(n/1e5)%100,th=Math.floor(n/1e3)%100,h=n%1000;
+ if(c)r+=t(c)+' Crore ';if(l)r+=w(l)+' Lakh ';if(th)r+=w(th)+' Thousand ';if(h)r+=t(h);return r.trim()}
+function tb(){return D.inv.reduce((s,i)=>s+i.total,0)+D.clients.reduce((s,c)=>s+(+c.ob||0),0)}
+function tg(){return D.inv.reduce((s,i)=>s+i.tax,0)}
+function billed(id){return D.inv.filter(i=>i.cid==id).reduce((s,i)=>s+i.total,0)}
+function due(id){var c=D.clients.find(x=>x.id==id)||{};return (+c.ob||0)+billed(id)-bal(id)}
+function mkInv(cid,desc,amt,gst,date,dueD,tt){var tax=Math.round(amt*gst/100);var o={id:uid(),no:invNo(date),date:date,due:dueD||'',cid:cid,desc:desc,amt:amt,gst:gst,tax:tax,total:amt+tax,tt:tt||autoTT(cid)};D.inv.push(o);return o}
+function pr(h){var r=$('rc');r.innerHTML=h;r.className='show';try{window.print()}catch(e){alert('Print available nahi, screenshot le lein')}setTimeout(function(){r.className=''},500)}
+/* ---- Clients table (billed from invoices) ---- */
+function ctable(){
+ var a=D.clients.filter(c=>(c.name+(c.pan||'')+(c.gstin||'')).toLowerCase().indexOf(q.toLowerCase())>-1);
+ if(!a.length)return '<div class="empty">Koi client nahi</div>';
+ var B=0,R=0,P=0,DU=0;
+ var r=a.map(c=>{var b=billed(c.id)+(+c.ob||0),rc=bal(c.id),d=b-rc,p=pc(c.id);B+=b;R+=rc;DU+=d;P+=p;
+ return '<tr><td><b>'+esc(c.name)+'</b><div class="mu">'+esc((c.pan||'').toUpperCase())+' '+esc(c.ph)+'</div></td><td>'+esc(c.svc)+'</td><td>'+gCell(c)+'</td><td>'+inr(c.fee)+' <span class="mu">+'+(c.gst==null?18:c.gst)+'% GST</span></td><td>'+inr(b)+'</td><td class="in">'+inr(rc)+'</td><td class="'+(d>0?'over':'in')+'"><b>'+inr(d)+'</b></td><td>'+p+'</td><td><button class="btn sm" onclick="editC(\''+c.id+'\')">Edit</button> <button class="btn sm" onclick="lc=\''+c.id+'\';go(\'Ledger\')">Ledger</button> <button class="btn sm del" onclick="delC(\''+c.id+'\')">\u2715</button></td></tr>'}).join('');
+ return '<div style="overflow-x:auto"><table><thead><tr><th>Client</th><th>Service</th><th>GST No.</th><th>Default Fee</th><th>Billed</th><th>Received</th><th>Due Balance</th><th>Pending Tasks</th><th></th></tr></thead><tbody>'+r+'</tbody><tfoot><tr><td>Total</td><td></td><td></td><td></td><td>'+inr(B)+'</td><td>'+inr(R)+'</td><td>'+inr(DU)+'</td><td>'+P+'</td><td></td></tr></tfoot></table></div>'}
+/* ---- Task boxes ---- */
+var byDue=(a,b)=>(a.due||'9').localeCompare(b.due||'9');
+function tcard(t,dn){var ov=!dn&&t.due&&t.due<today(),pr_=t.pri||'Medium';
+ return '<div class="tk'+(ov?' ov':'')+'"><b>'+esc(t.title)+'</b>'+(t.st=='In Progress'?' <span class="tag">In Progress</span>':'')+'<div class="mu">'+esc(cname(t.cid))+' \u00b7 '+esc(t.cat||'')+' \u00b7 <span class="p-'+pr_+'">'+pr_+'</span></div><div class="mu '+(ov?'over':'')+'">Due: '+(t.due||'\u2014')+(ov?' (overdue)':'')+(dn&&t.dd?' \u00b7 Done: '+t.dd:'')+'</div>'+(t.rem?'<div class="mu">'+esc(t.rem)+'</div>':'')+'<div style="margin-top:6px">'+(dn?(t.inv&&D.inv.some(function(x){return x.id==t.inv})?'<button class="btn sm" onclick="prI(\''+t.inv+'\')">\ud83e\uddfe Invoice '+esc((D.inv.find(function(x){return x.id==t.inv})||{}).no)+'</button> ':'<button class="btn sm" onclick="taskInv(\''+t.id+'\')">\ud83e\uddfe Invoice banayein</button> ')+'<button class="btn sm" onclick="reopen(\''+t.id+'\')">\u21a9 Reopen</button>':(t.st=='Pending'?'<button class="btn sm" onclick="startT(\''+t.id+'\')">\u25b6 Start</button> ':'')+'<button class="btn sm" onclick="cyc(\''+t.id+'\')">\u2713 Complete</button>')+' <button class="btn sm del" onclick="delT(\''+t.id+'\')">\u2715</button></div></div>'}
+function ttable(){var p=D.tasks.filter(t=>t.st!='Done').sort(byDue),d=D.tasks.filter(t=>t.st=='Done').sort((a,b)=>(b.dd||'').localeCompare(a.dd||''));
+ return '<div class="board"><div class="box pend"><h2>\u23f3 Pending Process ('+p.length+')</h2><div class="sc">'+(p.map(t=>tcard(t,0)).join('')||'<div class="empty">Koi pending nahi \ud83c\udf89</div>')+'</div></div><div class="box dn"><h2>\u2705 Completed ('+d.length+')</h2><div class="sc">'+(d.map(t=>tcard(t,1)).join('')||'<div class="empty">Abhi koi complete nahi</div>')+'</div></div></div>'}
+function startT(id){D.tasks.find(x=>x.id==id).st='In Progress';save();render()}
+function reopen(id){var t=D.tasks.find(x=>x.id==id);t.st='Pending';t.dd='';save();render()}
+function cyc(id){var t=D.tasks.find(x=>x.id==id);t.st='Done';t.dd=today();var c=D.clients.find(x=>x.id==t.cid);
+ if(c&&+c.fee>0&&confirm('Task complete! '+c.name+' ke liye '+inr(c.fee)+' + GST ka invoice banayein?')){mkInv(c.id,t.title,+c.fee,+(c.gst==null?18:c.gst),today())}
+ save();render()}
+function delT(id){D.tasks=D.tasks.filter(x=>x.id!=id);save();render()}
+/* ---- Invoices ---- */
+function vInv(){
+ var h='<div class="card"><h2>Naya Invoice</h2>'+(D.clients.length?'<form onsubmit="return addI(event)"><select name="cid">'+copts()+'</select><select name="svcid" onchange="svcPick(this)"><option value="">— Service chunein / custom —</option>'+sopts()+'</select><input name="desc" placeholder="Service / description" required><input name="amt" type="number" step="0.01" placeholder="Amount (GST se pehle)" required><select name="gst"><option value="18">GST 18%</option><option value="12">GST 12%</option><option value="5">GST 5%</option><option value="0">No GST</option></select><select name="tt"><option value="">Auto (state se)</option><option value="C">CGST + SGST</option><option value="I">IGST</option></select><input name="date" type="date" value="'+today()+'"><input name="due" type="date" title="Due date"><select name="bk" title="Bank account (invoice par)">'+bopts()+'</select><button class="btn">Invoice banayein</button></form>':'<div class="empty">Pehle client add karein</div>')+'</div>';
+ var a=D.inv.slice().sort((x,y)=>y.date.localeCompare(x.date)||y.no.localeCompare(x.no));
+ h+='<div class="card"><h2>Invoices ('+a.length+')</h2>'+(a.length?'<div style="overflow-x:auto"><table class="n567"><thead><tr><th>No.</th><th>Date</th><th>Client</th><th>Description</th><th>Taxable</th><th>GST</th><th>Total</th><th></th></tr></thead><tbody>'+a.map(i=>'<tr><td><b>'+i.no+'</b></td><td>'+i.date+'</td><td>'+esc(cname(i.cid))+'</td><td>'+esc(i.desc)+'</td><td>'+inr(i.amt)+'</td><td>'+inr(i.tax)+' <span class="mu">('+i.gst+'%)</span></td><td><b>'+inr(i.total)+'</b></td><td><button class="btn sm" onclick="editI(\''+i.id+'\')">Edit</button> <button class="btn sm" onclick="prI(\''+i.id+'\')">Print</button> <button class="btn sm del" onclick="delI(\''+i.id+'\')">\u2715</button></td></tr>').join('')+'</tbody></table></div>':'<div class="empty">Koi invoice nahi</div>')+'</div>';
+ return h}
+function addI(e){var o=fd(e);if(!o.cid){alert('Client chunein');return false}var i=mkInv(o.cid,o.desc,+o.amt,+o.gst,o.date,o.due,o.tt);save();render();if(confirm('Invoice '+i.no+' ban gaya. Abhi print karein?'))prI(i.id);return false}
+function delI(id){if(confirm('Invoice delete karein?')){D.inv=D.inv.filter(x=>x.id!=id);save();render()}}
+function prI(id){var i=D.inv.find(x=>x.id==id),c=D.clients.find(x=>x.id==i.cid)||{},s=D.set||{},R='style="text-align:right"';
+ var tx=i.tt=='I'?'<tr><td>IGST @ '+i.gst+'%</td><td '+R+'>'+inr(i.tax)+'</td></tr>':'<tr><td>CGST @ '+i.gst/2+'%</td><td '+R+'>'+inr(i.tax/2)+'</td></tr><tr><td>SGST @ '+i.gst/2+'%</td><td '+R+'>'+inr(i.tax/2)+'</td></tr>';
+ pr('<div style="border:2px solid #000;padding:18px;color:#000;background:#fff;font-size:14px"><div style="text-align:center">'+logoImg()+'<h2 style="margin:0">KINJA ASSOCIATES</h2><div>Chartered Accountants &amp; Tax Consultants</div><div>'+firmLine()+'</div></div><h3 style="text-align:center;border-top:1px solid #000;border-bottom:1px solid #000;padding:6px 0">TAX INVOICE</h3><table style="width:100%;min-width:0"><tr><td><b>Bill To:</b><br>'+esc(c.name)+'<br>PAN: '+esc((c.pan||'\u2014').toUpperCase())+(c.gstin?'<br>GSTIN: '+esc(c.gstin):'')+(c.addr?'<br>'+esc(c.addr):'')+'<br>'+esc(c.ph||'')+'</td><td '+R+'>Invoice No: <b>'+i.no+'</b><br>Date: '+i.date+'<br>Due: '+(i.due||'On receipt')+'</td></tr></table><table style="width:100%;min-width:0;margin-top:12px;border:1px solid #000"><tr><th>Description</th><th '+R+'>Amount</th></tr><tr><td>'+esc(i.desc)+(i.sac?' <small>(SAC '+esc(i.sac)+')</small>':'')+'</td><td '+R+'>'+inr(i.amt)+'</td></tr>'+tx+'<tr><td><b>Total</b></td><td '+R+'><b>'+inr(i.total)+'</b></td></tr></table><p>Amount in words: <b>Rupees '+words(i.total)+' Only</b></p>'+bankBlock(i)+termsBlock(i)+'<p style="margin-top:50px;text-align:right">For Kinja Associates<br><br>Authorised Signatory</p></div>')}
+/* ---- Party ledger ---- */
+function vLed(){
+ if(!D.clients.length)return '<div class="card"><div class="empty">Pehle client add karein</div></div>';
+ if(!D.clients.some(x=>x.id==lc))lc=D.clients[0].id;
+ var c=D.clients.find(x=>x.id==lc);
+ var h='<div class="card"><h2>Party-wise Ledger</h2><select data-s="1" onchange="lc=this.value;render()">'+D.clients.map(x=>'<option value="'+x.id+'"'+(x.id==lc?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select></div>';
+ var rows=[];D.inv.filter(i=>i.cid==lc).forEach(i=>rows.push({d:i.date,t:'Invoice '+i.no+' \u2013 '+i.desc,dr:i.total,cr:0}));
+ D.txns.filter(t=>t.cid==lc&&t.type=='Receipt').forEach(t=>rows.push({d:t.date,t:'Receipt '+t.no+' ('+t.mode+')'+(t.note?' \u2013 '+t.note:''),dr:0,cr:+t.amt}));
+ rows.sort((a,b)=>a.d.localeCompare(b.d));
+ var run=+c.ob||0,DR=run,CR=0;
+ var body='<tr><td></td><td>Opening Balance</td><td>'+(run?inr(run):'')+'</td><td></td><td>'+inr(run)+'</td></tr>'+rows.map(r=>{run+=r.dr-r.cr;DR+=r.dr;CR+=r.cr;return '<tr><td>'+r.d+'</td><td>'+esc(r.t)+'</td><td>'+(r.dr?inr(r.dr):'')+'</td><td class="in">'+(r.cr?inr(r.cr):'')+'</td><td>'+inr(run)+'</td></tr>'}).join('');
+ var tbl='<table class="n345"><thead><tr><th>Date</th><th>Particulars</th><th>Debit (Bill)</th><th>Credit (Received)</th><th>Balance</th></tr></thead><tbody>'+body+'</tbody><tfoot><tr><td></td><td>Closing Balance</td><td>'+inr(DR)+'</td><td>'+inr(CR)+'</td><td class="'+(run>0?'over':'in')+'">'+inr(run)+(run>0?' Dr (baaki)':'')+'</td></tr></tfoot></table>';
+ h+='<div class="card" id="ledbox"><h2>'+esc(c.name)+' <span class="mu">PAN: '+esc((c.pan||'\u2014').toUpperCase())+'</span></h2><div style="overflow-x:auto">'+tbl+'</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" onclick="prL()">Print Ledger</button><button class="btn" onclick="wa()">WhatsApp reminder</button><span class="mu">Opening balance:</span><input id="ob" type="number" value="'+(+c.ob||0)+'" style="width:120px"><button class="btn sm" onclick="setOb()">Set</button></div></div>';
+ return h}
+function setOb(){D.clients.find(x=>x.id==lc).ob=+$('ob').value||0;save();render()}
+function prL(){var c=D.clients.find(x=>x.id==lc);pr('<div style="color:#000;background:#fff;padding:14px"><h2 style="text-align:center;margin:0">KINJA ASSOCIATES</h2><p style="text-align:center;margin:0 0 10px">Ledger Account \u2013 '+esc(c.name)+' (as on '+today()+')</p>'+$('ledbox').querySelector('table').outerHTML+'</div>')}
+function wa(){var c=D.clients.find(x=>x.id==lc),p=String(c.ph||'').replace(/\D/g,'').slice(-10),d=due(c.id);
+ window.open('https://wa.me/91'+p+'?text='+encodeURIComponent('Namaste '+c.name+', Kinja Associates ki taraf se reminder: aapka '+inr(d)+' baaki hai. Kripya payment kar dein. Dhanyavad.'),'_blank')}
+/* ---- Automation ---- */
+function vAuto(){var s=D.set||{},m=today().slice(0,7);
+ return '<div class="card"><h2>\ud83d\udcc5 Compliance Calendar (auto tasks)</h2><p class="mu">Month chunein. Jis month mein due date aati hai, un sab clients ke task apne aap ban jaate hain (client ki service ke hisaab se: GST, TDS, ITR, Audit, ROC). Duplicate nahi banta.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="gm" type="month" value="'+m+'" style="width:180px"><button class="btn" onclick="gen()">Tasks banao</button></div><p class="mu">Note: Due dates sarkar kabhi badhati hai. Banne ke baad portal se confirm kar lein.</p></div>'+
+ '<div class="card"><h2>\ud83e\uddfe Bulk Invoice (monthly fee)</h2><p class="mu">Jin clients ka Default Fee bhara hai, un sab ko ek saath invoice.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="bd" placeholder="Description (jaise: GST filing - Oct 2026)" style="flex:1;min-width:220px"><input id="bdt" type="date" value="'+today()+'" style="width:160px"><button class="btn" onclick="bulk()">Invoices banao</button></div></div>'+
+  '<div class="card"><h2>\ud83d\udd14 Aur automation (apne aap)</h2><ul class="mu"><li>Task Complete karte hi us client ka invoice banane ka option</li><li>Invoice number financial year ke hisaab se: KA/2026-27/001</li><li>Dashboard par overdue / 7 din mein due tasks aur sabse zyada baaki parties</li><li>Ledger se WhatsApp payment reminder</li><li>Data har 8 second mein dusre computers se sync</li></ul></div>'}
+function setS(e){D.set=fd(e);save();alert('Save ho gaya');return false}
+function bulk(){var d=$('bd').value.trim(),dt=$('bdt').value;if(!d)return alert('Description likhein');var n=0;
+ D.clients.forEach(c=>{if(+c.fee>0&&!D.inv.some(i=>i.cid==c.id&&i.desc==d)){mkInv(c.id,d,+c.fee,+(c.gst==null?18:c.gst),dt);n++}});
+ save();alert(n+' invoice ban gaye');go('Invoices')}
+function gen(){var ym=$('gm').value;if(!ym)return alert('Month chunein');var y=+ym.slice(0,4),m=+ym.slice(5,7),n=0;
+ var pl=new Date(y,m-2,1).toLocaleString('en-IN',{month:'short',year:'numeric'});
+ function dd(day){return y+'-'+String(m).padStart(2,'0')+'-'+String(day).padStart(2,'0')}
+ var R=[['GST','GSTR-1 ('+pl+')',dd(11),'GST'],['GST','GSTR-3B ('+pl+')',dd(20),'GST'],['TDS','TDS deposit ('+pl+')',dd(7),'TDS']];
+ if([3,6,9,12].indexOf(m)>-1)R.push(['ITR Filing|Audit','Advance Tax instalment',dd(15),'Income Tax']);
+ if(m==7)R.push(['ITR Filing','ITR filing (non-audit)',dd(31),'Income Tax'],['TDS','TDS return Q1',dd(31),'TDS']);
+ if(m==9)R.push(['Audit','Tax Audit Report',dd(30),'Audit']);
+ if(m==10)R.push(['Audit','ITR filing (audit cases)',dd(31),'Income Tax'],['TDS','TDS return Q2',dd(31),'TDS'],['ROC / Company','AOC-4 filing',dd(30),'ROC']);
+ if(m==11)R.push(['ROC / Company','MGT-7 filing',dd(29),'ROC']);
+ if(m==1)R.push(['TDS','TDS return Q3',dd(31),'TDS']);
+ if(m==5)R.push(['TDS','TDS return Q4',dd(31),'TDS']);
+ D.clients.forEach(c=>R.forEach(r=>{if(r[0].split('|').indexOf(c.svc)>-1&&!D.tasks.some(t=>t.cid==c.id&&t.title==r[1])){D.tasks.push({id:uid(),title:r[1],cid:c.id,cat:r[3],pri:'High',due:r[2],rem:'Auto',st:'Pending'});n++}}));
+ save();alert(n+' task ban gaye');go('Tasks')}
+/* ---- Dashboard alerts ---- */
+function alerts(){var td=today(),w=ymd(new Date(Date.now()+7*864e5)),op=D.tasks.filter(t=>t.st!='Done');
+ var od=op.filter(t=>t.due&&t.due<td).sort(byDue),so=op.filter(t=>t.due&&t.due>=td&&t.due<=w).sort(byDue);
+ var ds=D.clients.map(c=>({c:c,d:due(c.id)})).filter(x=>x.d>0).sort((a,b)=>b.d-a.d).slice(0,8);
+ var li=t=>'<div class="row"><div>'+esc(t.title)+'<div class="mu">'+esc(cname(t.cid))+'</div></div><span class="over">'+t.due+'</span></div>';
+ return '<div class="board"><div class="card"><h2>\u26a0 Overdue ('+od.length+') &amp; 7 din mein due ('+so.length+')</h2>'+(od.concat(so).map(li).join('')||'<div class="empty">Sab theek hai \ud83d\udc4d</div>')+'</div><div class="card"><h2>\ud83d\udcb0 Sabse zyada baaki (Due)</h2>'+(ds.map(x=>'<div class="row"><div>'+esc(x.c.name)+'</div><b class="over">'+inr(x.d)+'</b></div>').join('')||'<div class="empty">Koi due nahi</div>')+'</div></div>'}
+var _r=render;
+render=function(){if(tab=='Invoices'){$('v').innerHTML=vInv();return}if(tab=='Ledger'){$('v').innerHTML=vLed();return}if(tab=='Automation'){$('v').innerHTML=vAuto();return}_r();if(tab=='Dashboard')$('v').insertAdjacentHTML('beforeend',alerts())};
+
+/* ===== v3: GSTIN column ===== */
+var ST={'01':'Jammu & Kashmir','02':'Himachal Pradesh','03':'Punjab','04':'Chandigarh','05':'Uttarakhand','06':'Haryana','07':'Delhi','08':'Rajasthan','09':'Uttar Pradesh','10':'Bihar','11':'Sikkim','12':'Arunachal Pradesh','13':'Nagaland','14':'Manipur','15':'Mizoram','16':'Tripura','17':'Meghalaya','18':'Assam','19':'West Bengal','20':'Jharkhand','21':'Odisha','22':'Chhattisgarh','23':'Madhya Pradesh','24':'Gujarat','26':'Dadra & Nagar Haveli and Daman & Diu','27':'Maharashtra','29':'Karnataka','30':'Goa','31':'Lakshadweep','32':'Kerala','33':'Tamil Nadu','34':'Puducherry','35':'Andaman & Nicobar','36':'Telangana','37':'Andhra Pradesh','38':'Ladakh','97':'Other Territory'};
+function gSt(g){return g&&g.length>=2?(ST[g.slice(0,2)]||'State?'):''}
+function gOk(g){if(!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(g))return false;var C='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',s=0;for(var i=0;i<14;i++){var p=C.indexOf(g[i])*(i%2?2:1);s+=Math.floor(p/36)+p%36}return C[(36-s%36)%36]==g[14]}
+function autoTT(cid){var c=D.clients.find(x=>x.id==cid)||{},a=(c.gstin||'').slice(0,2),b=((D.set||{}).gstin||'').slice(0,2);return a&&b&&a!=b?'I':'C'}
+function gCell(c){return (c.gstin?'<b>'+esc(c.gstin)+'</b><div class="mu">'+esc(gSt(c.gstin))+(c.gs?' \u00b7 '+esc(c.gs):'')+(gOk(c.gstin)?'':' <span class="over">\u26a0 check karein</span>')+'</div>':'<span class="mu">\u2014</span>')+'<div style="margin-top:3px"><button class="btn sm" onclick="gstE(\''+c.id+'\')">\u270e</button> '+(c.gstin?'<button class="btn sm" onclick="gstP(\''+c.id+'\')">Portal check</button>':'')+'</div>'}
+function addC(e){var o=fd(e);o.gstin=(o.gstin||'').trim().toUpperCase();
+ if(o.gstin){if(!gOk(o.gstin)&&!confirm('GSTIN galat lag raha hai (format/checksum). Phir bhi save karein?'))return false;if(!o.pan&&o.gstin.length==15)o.pan=o.gstin.slice(2,12)}
+ o.id=uid();D.clients.push(o);save();render();return false}
+function gstE(id){var c=D.clients.find(x=>x.id==id),g=prompt('GST Number (15 digit) \u2013 '+c.name,c.gstin||'');if(g===null)return;g=g.trim().toUpperCase();
+ if(g&&!gOk(g)&&!confirm('GSTIN galat lag raha hai. Phir bhi save karein?'))return;
+ c.gstin=g;if(g.length==15&&!c.pan)c.pan=g.slice(2,12);save();render()}
+function gstP(id){var c=D.clients.find(x=>x.id==id);try{navigator.clipboard.writeText(c.gstin)}catch(e){}
+ alert('GSTIN copy ho gaya: '+c.gstin+'\nPortal khulega. Wahan paste karke captcha bharein aur details dekh lein.');window.open('https://services.gst.gov.in/services/searchtp','_blank')}
+
+function gstAuto(el){var g=el.value.toUpperCase();el.value=g;if(g.length==15&&el.form.pan&&!el.form.pan.value)el.form.pan.value=g.slice(2,12)}
+function gstFill(f){var g=f.gstin.value.trim().toUpperCase();if(!gOk(g)){alert('Pehle sahi 15 digit GST number daalein');return}
+ if(!f.pan.value)f.pan.value=g.slice(2,12);
+ fetch('/api/gst?gstin='+g,{cache:'no-store'}).then(r=>r.json()).then(j=>{
+  if(j.error=='not_configured'){if(confirm('PAN aur state bhar diya. Naam/address apne aap laane ke liye GST API set karni padegi (README mein tareeka hai).\n\nAbhi portal par manually dekhna chahte hain?')){try{navigator.clipboard.writeText(g)}catch(e){}window.open('https://services.gst.gov.in/services/searchtp','_blank')}return}
+  if(j.error){alert(j.error);return}
+  if(j.name)f.name.value=j.name;if(j.address)f.addr.value=j.address;if(j.status)f.gs.value=j.status;
+  alert('Details aa gayi: '+(j.name||'')+(j.status?' ('+j.status+')':'')+'\nCheck karke Add dabayein.')}).catch(()=>alert('Server se connection nahi hai'))}
+
+function gstParse(t){var L=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ function pv(re){for(var i=0;i<L.length;i++){if(re.test(L[i])){var p=L[i].split(/\t|\s*:\s+|\s{2,}/).map(x=>x.trim()).filter(Boolean);if(p.length>1)return p.slice(1).join(' ');return (L[i+1]||'').trim()}}return ''}
+ var ad='';for(var i=0;i<L.length&&!ad;i++){if(/^principal place of business/i.test(L[i])){var p=L[i].split(/\t|\s*:\s+/);if(p.length>1&&p[1].trim()){ad=p.slice(1).join(' ').trim();break}
+  for(var j=i+1;j<Math.min(L.length,i+6);j++){if(/^(address:?|principal place.*|nature of.*|date of.*|constitution.*|state.*)$/i.test(L[j]))continue;ad=L[j];break}}}
+ return {gstin:(t.match(/\b\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]\b/)||[''])[0],name:pv(/^legal name/i)||pv(/^trade name/i),addr:ad,status:pv(/gstin\s*\/\s*uin\s*status/i)||pv(/^status\b/i)}}
+function gstPaste(f){var m=document.createElement('div');m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:flex;align-items:center;justify-content:center;padding:16px';
+ m.innerHTML='<div class="card" style="max-width:560px;width:100%;margin:0"><h2>Portal ka result paste karo</h2><ol class="mu"><li>Portal kholo dabayein, GST number daalkar captcha bharein aur Search karein.</li><li>Result page par Ctrl+A, phir Ctrl+C dabayein.</li><li>Neeche Ctrl+V karke Bharo dabayein.</li></ol><textarea id="gpt" rows="8" placeholder="Yahan paste karein"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="gpo">Portal kholo</button><button type="button" class="btn" id="gpb">Bharo</button><button type="button" class="btn sm" id="gpc">Band</button></div></div>';
+ document.body.appendChild(m);var $m=x=>m.querySelector(x);
+ $m('#gpc').onclick=()=>m.remove();
+ $m('#gpo').onclick=()=>{var g=f.gstin.value.trim().toUpperCase();try{navigator.clipboard.writeText(g)}catch(e){}window.open('https://services.gst.gov.in/services/searchtp','_blank')};
+ $m('#gpb').onclick=()=>{var r=gstParse($m('#gpt').value);if(!r.name&&!r.addr&&!r.status){alert('Samajh nahi aaya. Result page par Ctrl+A, Ctrl+C karke poora text paste karein.');return}
+  if(r.gstin&&!f.gstin.value)f.gstin.value=r.gstin;var g=f.gstin.value.toUpperCase();if(g.length==15&&!f.pan.value)f.pan.value=g.slice(2,12);
+  if(r.name)f.name.value=r.name;if(r.addr)f.addr.value=r.addr;if(r.status)f.gs.value=r.status;m.remove();
+  alert('Bhar diya:\nNaam: '+(r.name||'\u2014')+'\nStatus: '+(r.status||'\u2014')+'\nAddress: '+(r.addr||'\u2014')+'\n\nCheck karke Add dabayein.')}}
+
+/* ===== v6 ===== */
+var tf='',cba='cash',rp={t:'party',p:'M',m:today().slice(0,7),fy:(+today().slice(5,7)>=4?+today().slice(0,4):+today().slice(0,4)-1),q:1,from:today().slice(0,8)+'01',to:today(),acc:'cash',s:''};
+function firmLine(){var s=D.set||{};return [s.addr,s.mobile&&'Mob: '+s.mobile,s.phone&&'Tel: '+s.phone,s.email&&'Email: '+s.email,s.gstin&&'GSTIN: '+s.gstin].filter(Boolean).map(esc).join(' \u00b7 ')}
+/* party search */
+function gsr(v){var b=$('gsl');v=v.trim().toLowerCase();if(!v){b.style.display='none';return}
+ var a=D.clients.filter(c=>(c.name+' '+(c.pan||'')+' '+(c.gstin||'')+' '+(c.ph||'')).toLowerCase().indexOf(v)>-1).slice(0,8);
+ b.innerHTML=a.length?a.map(c=>'<div class="gsi" onclick="gsGo(\''+c.id+'\')"><b>'+esc(c.name)+'</b> <span class="mu">'+esc(c.gstin||c.pan||c.ph||'')+'</span><span style="float:right" class="'+(due(c.id)>0?'over':'in')+'">'+inr(due(c.id))+'</span></div>').join(''):'<div class="gsi mu">Koi party nahi mili</div>';b.style.display='block'}
+function gsGo(id){lc=id;$('gsq').value='';$('gsl').style.display='none';go('Ledger')}
+function enh(){document.querySelectorAll('select[name=cid],select[data-s]').forEach(s=>{if(s._e)return;s._e=1;var all=[].map.call(s.options,o=>[o.value,o.text]),w=document.createElement('div'),i=document.createElement('input');i.placeholder='\ud83d\udd0d Party search';i.style.marginBottom='4px';s.parentNode.insertBefore(w,s);w.appendChild(i);w.appendChild(s);
+ i.oninput=function(){var v=i.value.toLowerCase(),cur=s.value,m=all.filter(a=>{var c=D.clients.find(x=>x.id==a[0])||{};return (a[1]+' '+(c.pan||'')+' '+(c.gstin||'')+' '+(c.ph||'')).toLowerCase().indexOf(v)>-1});s.innerHTML=m.map(a=>'<option value="'+a[0]+'">'+esc(a[1])+'</option>').join('');if(m.some(a=>a[0]==cur))s.value=cur;else if(s.onchange)s.onchange()}})}
+/* tasks: assign + 3 boxes */
+function staffNames(){var a=((D.set||{}).staff||'').split(',').map(x=>x.trim()).filter(Boolean);D.tasks.forEach(t=>{if(t.by&&a.indexOf(t.by)<0)a.push(t.by)});return a}
+function stfDL(){return '<datalist id="stf">'+staffNames().map(n=>'<option value="'+esc(n)+'">').join('')+'</datalist>'}
+function tcard(t,dn){var ov=!dn&&t.due&&t.due<today(),p=t.pri||'Medium';
+ return '<div class="tk'+(ov?' ov':'')+'"><b>'+esc(t.title)+'</b><div class="mu">'+esc(cname(t.cid))+' \u00b7 '+esc(t.cat||'')+' \u00b7 <span class="p-'+p+'">'+p+'</span></div>'+(t.by?'<div style="font-size:13px">\ud83d\udc64 <b>'+esc(t.by)+'</b></div>':'<div class="mu">\ud83d\udc64 Assign nahi</div>')+'<div class="mu '+(ov?'over':'')+'">Due: '+(t.due||'\u2014')+(ov?' (overdue)':'')+(dn&&t.dd?' \u00b7 Done: '+t.dd:'')+'</div>'+(t.rem?'<div class="mu">'+esc(t.rem)+'</div>':'')+'<div style="margin-top:6px">'+(dn?'<button class="btn sm" onclick="reopen(\''+t.id+'\')">\u21a9 Reopen</button>':(t.st=='Pending'?'<button class="btn sm" onclick="startT(\''+t.id+'\')">\u25b6 Start</button> ':'')+'<button class="btn sm" onclick="cyc(\''+t.id+'\')">\u2713 Complete</button>')+' <button class="btn sm" onclick="asg(\''+t.id+'\')">\ud83d\udc64 Assign</button> <button class="btn sm del" onclick="delT(\''+t.id+'\')">\u2715</button></div></div>'}
+function asg(id){var t=D.tasks.find(x=>x.id==id),n=prompt('Kisko assign karni hai? (naam)',t.by||'');if(n===null)return;t.by=n.trim();save();render()}
+function tboxes(lim){var f=D.tasks.filter(t=>!tf||t.by==tf),P=f.filter(t=>t.st=='Pending').sort(byDue),I=f.filter(t=>t.st=='In Progress').sort(byDue),C=f.filter(t=>t.st=='Done').sort((a,b)=>(b.dd||'').localeCompare(a.dd||''));
+ function bx(cls,h,a,dn,e){return '<div class="box '+cls+'"><h2>'+h+' ('+a.length+')</h2><div class="sc">'+(a.slice(0,lim||999).map(t=>tcard(t,dn)).join('')||'<div class="empty">'+e+'</div>')+'</div></div>'}
+ return '<div class="board3">'+bx('pend','\u23f3 Pending Task',P,0,'Koi pending nahi \ud83c\udf89')+bx('prog','\ud83d\udd04 In Process',I,0,'Koi process mein nahi')+bx('dn','\u2705 Complete Task',C,1,'Abhi koi complete nahi')+'</div>'}
+function ttable(){return '<div style="margin-bottom:10px">\ud83d\udc64 Dekhein: <select style="width:auto" onchange="tf=this.value;list()"><option value="">Sab log</option>'+staffNames().map(x=>'<option'+(x==tf?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select></div>'+tboxes()}
+/* cash & bank */
+function acctOf(t){return t.mode=='Cash'?'cash':(t.acc&&D.banks.some(b=>b.id==t.acc)?t.acc:(D.banks[0]?D.banks[0].id:'bank0'))}
+function accList(){return [{id:'cash',name:'Cash',ob:+((D.set||{}).cashOb)||0}].concat(D.banks.map(b=>({id:b.id,name:b.bank+(b.ano?' \u00b7 '+String(b.ano).slice(-4):''),ob:+b.ob||0}))).concat(D.banks.length?[]:[{id:'bank0',name:'Bank (account set nahi)',ob:0}])}
+function accTx(id){return D.txns.filter(t=>acctOf(t)==id)}
+function accSum(id){var a=accList().find(x=>x.id==id)||{ob:0},i=0,o=0;accTx(id).forEach(t=>{t.type=='Receipt'?i+=+t.amt:o+=+t.amt});return {ob:a.ob,i:i,o:o,bal:a.ob+i-o}}
+function bn(id){var b=D.banks.find(x=>x.id==id);return b?b.bank:''}
+function bopts(){return D.banks.length?D.banks.map(b=>'<option value="'+b.id+'">'+esc(b.bank)+(b.ano?' \u00b7 '+esc(String(b.ano).slice(-4)):'')+'</option>').join(''):'<option value="">(Bank account nahi)</option>'}
+function cbCards(){return '<div class="grid" style="margin-top:12px">'+accList().map(a=>{var x=accSum(a.id);return '<div class="card stat"><b>'+inr(x.bal)+'</b><span>'+esc(a.name)+' balance</span><div style="font-size:12px">Aaya '+inr(x.i)+' \u00b7 Gaya '+inr(x.o)+'</div></div>'}).join('')+'</div>'}
+function bookData(id,from,to){var a=accList().find(x=>x.id==id)||{name:id,ob:0},tx=accTx(id).sort((x,y)=>x.date.localeCompare(y.date)),run=a.ob;
+ tx.filter(t=>t.date<from).forEach(t=>{run+=t.type=='Receipt'?+t.amt:-t.amt});var I=0,O=0,rows=[['','Opening Balance','','','',run]];
+ tx.filter(t=>t.date>=from&&t.date<=to).forEach(t=>{var r=t.type=='Receipt',m=+t.amt;run+=r?m:-m;r?I+=m:O+=m;rows.push([t.date,(r?'Receipt ':'Payment ')+t.no+(t.note?' \u2013 '+t.note:''),cname(t.cid),r?m:'',r?'':m,run])});
+ return {title:a.name+' Ledger',sub:from>'0001'&&to<'9999'?from+' se '+to:'Poora record',headers:['Date','Particulars','Party','Aaya (In)','Gaya (Out)','Balance'],rows:rows,total:['','Total','',I,O,run]}}
+function vCB(){var L=accList();if(!L.some(a=>a.id==cba))cba='cash';var d=bookData(cba,'0000-01-01','9999-12-31');
+ return cbCards().replace('margin-top:12px','')+'<div class="card"><h2>\ud83c\udfe6 Cash / Bank Ledger</h2><div class="rctl"><select onchange="cba=this.value;render()">'+L.map(a=>'<option value="'+a.id+'"'+(a.id==cba?' selected':'')+'>'+esc(a.name)+' ledger</option>').join('')+'</select><button class="btn" onclick="repOut(\'x\',bookData(cba,\'0000-01-01\',\'9999-12-31\'))">\ud83d\udcd7 Excel</button><button class="btn" onclick="repOut(\'p\',bookData(cba,\'0000-01-01\',\'9999-12-31\'))">\ud83d\udcc4 PDF / Print</button></div>'+repTable(d)+'</div>'}
+/* reports */
+function repTable(d){var N=d.total.map(function(c){return typeof c=='number'}),A=function(j){return N[j]?' class="r"':''};
+ return '<div style="overflow-x:auto"><table class="rt"><thead><tr>'+d.headers.map(function(h,j){return '<th'+A(j)+'>'+esc(h)+'</th>'}).join('')+'</tr></thead><tbody>'+(d.rows.map(function(r){return '<tr>'+r.map(function(c,j){return typeof c=='number'?'<td class="r">'+inr(c)+'</td>':'<td'+A(j)+'>'+esc(c)+'</td>'}).join('')+'</tr>'}).join('')||'<tr><td colspan="'+d.headers.length+'" class="empty">Is period mein koi entry nahi</td></tr>')+'</tbody><tfoot><tr>'+d.total.map(function(c,j){return typeof c=='number'?'<td class="r">'+inr(c)+'</td>':'<td'+A(j)+'>'+esc(c)+'</td>'}).join('')+'</tr></tfoot></table></div>'}
+function repOut(k,d){if(k=='p'){pr('<div style="color:#000;background:#fff;padding:12px"><h2 style="text-align:center;margin:0">KINJA ASSOCIATES</h2><div style="text-align:center;font-size:13px">'+firmLine()+'</div><h3 style="margin:12px 0 2px">'+esc(d.title)+'</h3><div style="margin-bottom:8px">'+esc(d.sub)+'</div>'+repTable(d)+'</div>');return}
+ fetch('/api/xlsx',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'Kinja Associates \u2013 '+d.title+' ('+d.sub+')',headers:d.headers,rows:d.rows.concat([d.total])})}).then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=d.title.replace(/[^A-Za-z0-9 _-]/g,'')+'.xlsx';document.body.appendChild(a);a.click();a.remove()}).catch(()=>alert('Excel nahi ban paya. Naya server.py lagakar server dobara chalayein.'))}
+function rRange(){var y=+rp.fy;if(rp.p=='M'){var Y=+rp.m.slice(0,4),M=+rp.m.slice(5,7);return [rp.m+'-01',rp.m+'-'+String(new Date(Y,M,0).getDate()).padStart(2,'0')]}
+ if(rp.p=='Q')return [[y+'-04-01',y+'-06-30'],[y+'-07-01',y+'-09-30'],[y+'-10-01',y+'-12-31'],[(y+1)+'-01-01',(y+1)+'-03-31']][rp.q-1];
+ if(rp.p=='Y')return [y+'-04-01',(y+1)+'-03-31'];return [rp.from||'0000-01-01',rp.to||'9999-12-31']}
+function repData(){var R=rRange(),f=R[0],t=R[1],fl=rp.fy+'-'+String((+rp.fy+1)%100).padStart(2,'0'),sub=(rp.p=='M'?'Month ':rp.p=='Q'?'FY '+fl+' Q'+rp.q+' ':rp.p=='Y'?'FY '+fl+' ':'')+'('+f+' se '+t+')',T=rp.t,s=(rp.s||'').toLowerCase();
+ var pf=id=>{if(!s)return true;var c=D.clients.find(x=>x.id==id)||{};return ((c.name||'')+' '+(c.pan||'')+' '+(c.gstin||'')).toLowerCase().indexOf(s)>-1};
+ var sum=(a,k)=>a.reduce((z,x)=>z+ +x[k],0),hd,rows,ni,ti;
+ if(T=='book'){var b=bookData(rp.acc,f,t);b.sub=sub;return b}
+ if(T=='party'){ti='Party-wise Report';hd=['Party','GSTIN','Opening','Billed','Received','Closing Due'];ni=[2,3,4,5];
+  rows=D.clients.filter(c=>pf(c.id)).map(c=>{var iv=D.inv.filter(i=>i.cid==c.id),rc=D.txns.filter(x=>x.cid==c.id&&x.type=='Receipt'),op=(+c.ob||0)+sum(iv.filter(i=>i.date<f),'total')-sum(rc.filter(x=>x.date<f),'amt'),bl=sum(iv.filter(i=>i.date>=f&&i.date<=t),'total'),rv=sum(rc.filter(x=>x.date>=f&&x.date<=t),'amt');return [c.name,c.gstin||'',op,bl,rv,op+bl-rv]}).filter(r=>r[2]||r[3]||r[4]||r[5])}
+ else if(T=='inv'){ti='Invoice Report';hd=['Date','Invoice No','Party','GSTIN','Taxable','GST','Total'];ni=[4,5,6];
+  rows=D.inv.filter(i=>i.date>=f&&i.date<=t&&pf(i.cid)).sort((a,b)=>a.date.localeCompare(b.date)).map(i=>[i.date,i.no,cname(i.cid),(D.clients.find(c=>c.id==i.cid)||{}).gstin||'',i.amt,i.tax,i.total])}
+ else{var ty=T=='rec'?'Receipt':'Payment';ti=ty+' Report (date-wise)';hd=['Date',ty+' No','Party','Mode','Account','Amount','Note'];ni=[5];
+  rows=D.txns.filter(x=>x.type==ty&&x.date>=f&&x.date<=t&&pf(x.cid)).sort((a,b)=>a.date.localeCompare(b.date)).map(x=>[x.date,x.no,cname(x.cid),x.mode,x.mode=='Cash'?'Cash':(bn(acctOf(x))||'Bank'),+x.amt,x.note||''])}
+ return {title:ti,sub:sub,headers:hd,rows:rows,total:hd.map((h,j)=>j==0?'Total':ni.indexOf(j)>-1?sum(rows,j):'')}}
+function sel(v,o,fn){return '<select onchange="'+fn+'">'+o.map(x=>'<option value="'+x[0]+'"'+(String(v)==String(x[0])?' selected':'')+'>'+x[1]+'</option>').join('')+'</select>'}
+function vRep(){var y=+rp.fy,fo=[];for(var k=y-4;k<=y+1;k++)fo.push([k,k+'-'+String((k+1)%100).padStart(2,'0')]);
+ var h='<div class="card"><h2>\ud83d\udcca Reports</h2><div class="rctl">'+sel(rp.t,[['party','Party-wise Report'],['rec','Receipt Report (date-wise)'],['pay','Payment Report (date-wise)'],['inv','Invoice Report'],['book','Cash / Bank Book']],'rp.t=this.value;render()')+sel(rp.p,[['M','Monthly'],['Q','Quarterly'],['Y','Yearly (FY)'],['C','Custom dates']],'rp.p=this.value;render()')+
+ (rp.p=='M'?'<input type="month" value="'+rp.m+'" onchange="rp.m=this.value;render()">':'')+(rp.p=='Q'||rp.p=='Y'?sel(rp.fy,fo,'rp.fy=this.value;render()'):'')+(rp.p=='Q'?sel(rp.q,[[1,'Q1 (Apr-Jun)'],[2,'Q2 (Jul-Sep)'],[3,'Q3 (Oct-Dec)'],[4,'Q4 (Jan-Mar)']],'rp.q=this.value;render()'):'')+
+ (rp.p=='C'?'<input type="date" value="'+rp.from+'" onchange="rp.from=this.value;render()"><input type="date" value="'+rp.to+'" onchange="rp.to=this.value;render()">':'')+
+ (rp.t=='book'?sel(rp.acc,accList().map(a=>[a.id,a.name]),'rp.acc=this.value;render()'):'<input placeholder="\ud83d\udd0d Party search" value="'+esc(rp.s)+'" onchange="rp.s=this.value;render()">')+
+ '</div><div class="rctl" style="margin-top:10px"><button class="btn" onclick="repOut(\'x\',repData())">\ud83d\udcd7 Excel download</button><button class="btn" onclick="repOut(\'p\',repData())">\ud83d\udcc4 PDF / Print</button></div><div class="mu" style="margin-top:6px">PDF ke liye Print window mein Destination: <b>Save as PDF</b> chunein.</div></div>';
+ var d=repData();return h+'<div class="card"><h2>'+esc(d.title)+'</h2><div class="mu">'+esc(d.sub)+'</div>'+repTable(d)+'</div>'}
+/* invoice: services + bank */
+function sopts(){return D.svcs.map(s=>'<option value="'+s.id+'">'+esc(s.name)+'</option>').join('')}
+function svcPick(el){var f=el.form,s=D.svcs.find(x=>x.id==el.value);if(!s)return;f.desc.value=s.name;if(+s.amt)f.amt.value=s.amt;f.gst.value=String(s.gst||0)}
+function addI(e){var o=fd(e);if(!o.cid){alert('Client chunein');return false}var i=mkInv(o.cid,o.desc,+o.amt,+o.gst,o.date,o.due,o.tt),sv=D.svcs.find(x=>x.id==o.svcid);i.sac=sv?sv.sac:'';i.bk=o.bk;save();render();if(confirm('Invoice '+i.no+' ban gaya. Abhi print karein?'))prI(i.id);return false}
+function bankBlock(i){var b=D.banks.find(x=>x.id==i.bk)||D.banks[0],s=D.set||{};if(!b)return s.bank?'<p>'+esc(s.bank)+'</p>':'';
+ return '<p style="font-size:13px"><b>Bank Details</b><br>A/c Name: '+esc(b.holder||'')+'<br>Bank: '+esc(b.bank||'')+(b.addr?', '+esc(b.addr):'')+'<br>A/c No: '+esc(b.ano||'')+' \u00b7 IFSC: '+esc(b.ifsc||'')+(b.upi?'<br>UPI: '+esc(b.upi):'')+'</p>'}
+/* settings */
+function setS(e){D.set=Object.assign(D.set||{},fd(e));save();render();alert('Save ho gaya');return false}
+function addB(e){var o=fd(e);o.id=uid();o.ifsc=o.ifsc.toUpperCase();o.ob=+o.ob||0;D.banks.push(o);save();render();return false}
+function delB(id){if(confirm('Bank account hatayein?')){D.banks=D.banks.filter(x=>x.id!=id);save();render()}}
+function addSv(e){var o=fd(e);o.id=uid();o.amt=+o.amt||0;o.gst=+o.gst;D.svcs.push(o);save();render();return false}
+function delSv(id){D.svcs=D.svcs.filter(x=>x.id!=id);save();render()}
+function vSet(){var s=D.set||{};
+ return '<div class="card"><h2>\ud83c\udfe2 Firm details (sab optional)</h2><form onsubmit="return setS(event)"><input name="addr" placeholder="Poora address" value="'+esc(s.addr)+'"><input name="mobile" placeholder="Mobile number" value="'+esc(s.mobile)+'"><input name="phone" placeholder="Phone (optional)" value="'+esc(s.phone)+'"><input name="email" placeholder="Email ID" value="'+esc(s.email)+'"><input name="gstin" placeholder="Firm GSTIN" value="'+esc(s.gstin)+'"><input name="staff" placeholder="Staff ke naam (comma se): Ravi, Sunita" value="'+esc(s.staff)+'"><input name="cashOb" type="number" placeholder="Cash opening balance" value="'+esc(s.cashOb)+'"><button class="btn">Save</button></form></div>'+
+ '<div class="card"><h2>\ud83c\udfe6 Bank Accounts ('+D.banks.length+')</h2><form onsubmit="return addB(event)"><input name="holder" placeholder="Account Name (holder)" required><input name="bank" placeholder="Bank ka naam" required><input name="ano" placeholder="Account number" required><input name="ifsc" placeholder="IFSC code" style="text-transform:uppercase" required><input name="addr" placeholder="Bank / Branch address"><input name="upi" placeholder="UPI ID (optional)"><input name="ob" type="number" placeholder="Opening balance"><button class="btn">+ Bank add karein</button></form>'+
+ D.banks.map(b=>'<div class="row"><div><b>'+esc(b.bank)+'</b> \u00b7 '+esc(b.holder)+'<div class="mu">A/c: '+esc(b.ano)+' \u00b7 IFSC: '+esc(b.ifsc)+(b.addr?' \u00b7 '+esc(b.addr):'')+' \u00b7 Opening: '+inr(b.ob)+'</div></div><button class="btn sm del" onclick="delB(\''+b.id+'\')">\u2715</button></div>').join('')+'</div>'+
+ '<div class="card"><h2>\ud83e\uddfe Services (invoice ke liye)</h2><form onsubmit="return addSv(event)"><input name="name" placeholder="Service ka naam" required><input name="sac" placeholder="SAC code (optional)"><input name="amt" type="number" placeholder="Default amount"><select name="gst"><option value="18">GST 18%</option><option value="12">12%</option><option value="5">5%</option><option value="0">No GST</option></select><button class="btn">+ Service add</button></form>'+
+ D.svcs.map(x=>'<div class="row"><div><b>'+esc(x.name)+'</b><div class="mu">'+(x.sac?'SAC '+esc(x.sac)+' \u00b7 ':'')+inr(x.amt)+' \u00b7 GST '+x.gst+'%</div></div><button class="btn sm del" onclick="delSv(\''+x.id+'\')">\u2715</button></div>').join('')+'</div>'}
+var _r2=render;
+render=function(){if(tab=='Reports')$('v').innerHTML=vRep();else if(tab=='Cash-Bank')$('v').innerHTML=vCB();else if(tab=='Settings')$('v').innerHTML=vSet();else{_r2();
+ if(tab=='Dashboard'){var g=$('v').querySelector('.grid'),u=[].find.call($('v').querySelectorAll('.card'),c=>/Upcoming/.test(c.textContent.slice(0,25)));if(u)u.remove();if(g)g.insertAdjacentHTML('afterend',cbCards()+'<h2 style="margin:16px 0 8px">\ud83d\udccb Task Status</h2>'+tboxes(8))}}
+ enh()};
+
+nav();render();load();
+
+/* ===== Edit Receipt / Payment entry ===== */
+function editX(id){
+ var t=D.txns.find(function(x){return x.id==id});if(!t)return;
+ var old=document.getElementById('editBox');if(old)old.remove();
+ var m=['Cash','UPI','Bank Transfer','Cheque'].map(function(x){return '<option'+(x==t.mode?' selected':'')+'>'+x+'</option>'}).join('');
+ var co=copts().replace('value="'+t.cid+'"','value="'+t.cid+'" selected');
+ var bo=bopts();if(t.acc)bo=bo.replace('value="'+t.acc+'"','value="'+t.acc+'" selected');
+ var d=document.createElement('div');d.id='editBox';
+ d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+ d.innerHTML='<div class="card" style="width:100%;max-width:440px;max-height:92vh;overflow:auto;margin:0"><h2>Edit '+esc(t.type)+' #'+esc(t.no)+'</h2><form id="editF" style="display:grid;gap:8px"><select name="cid">'+co+'</select><input name="amt" type="number" step="any" placeholder="Amount (₹)" required value="'+esc(t.amt)+'"><input name="date" type="date" required value="'+esc(t.date)+'"><select name="mode">'+m+'</select><select name="acc" title="Bank account">'+bo+'</select><input name="note" placeholder="Note / purpose" value="'+esc(t.note||'')+'"><div style="display:flex;gap:8px"><button class="btn" type="submit">Update</button><button class="btn del" type="button" onclick="document.getElementById(\'editBox\').remove()">Cancel</button></div></form></div>';
+ document.body.appendChild(d);
+ d.addEventListener('click',function(e){if(e.target===d)d.remove()});
+ document.getElementById('editF').onsubmit=function(e){var o=fd(e);
+  t.cid=o.cid;t.amt=o.amt;t.date=o.date;t.mode=o.mode;t.acc=o.acc;t.note=o.note;
+  save();d.remove();render();return false}
+}
+
+/* ===== Task complete -> Invoice (prefilled form) ===== */
+function cyc(id){var t=D.tasks.find(function(x){return x.id==id});t.st='Done';t.dd=today();save();render();taskInv(id)}
+function taskInv(id){
+ var t=D.tasks.find(function(x){return x.id==id});if(!t)return;
+ var c=D.clients.find(function(x){return x.id==t.cid});
+ if(!c){alert('Is task ka client nahi mila');return}
+ var old=document.getElementById('tinvBox');if(old)old.remove();
+ var g=String(c.gst==null?18:c.gst);
+ var go=[['18','GST 18%'],['12','GST 12%'],['5','GST 5%'],['0','No GST']].map(function(x){return '<option value="'+x[0]+'"'+(x[0]==g?' selected':'')+'>'+x[1]+'</option>'}).join('');
+ var d=document.createElement('div');d.id='tinvBox';
+ d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+ d.innerHTML='<div class="card" style="width:100%;max-width:460px;max-height:92vh;overflow:auto;margin:0"><h2>\u2705 Task complete \u2013 Invoice banayein?</h2><div class="mu" style="margin-bottom:8px">'+esc(t.title)+' \u00b7 <b>'+esc(c.name)+'</b></div><form id="tinvF" style="display:grid;gap:8px"><select name="svcid" onchange="svcPick(this)"><option value="">\u2014 Service chunein / custom \u2014</option>'+sopts()+'</select><input name="desc" placeholder="Service / description" required value="'+esc(t.title)+'"><input name="amt" type="number" step="0.01" placeholder="Amount (GST se pehle)" required value="'+(+c.fee>0?esc(c.fee):'')+'"><select name="gst">'+go+'</select><select name="tt"><option value="">Auto (state se)</option><option value="C">CGST + SGST</option><option value="I">IGST</option></select><input name="date" type="date" value="'+today()+'"><input name="due" type="date" title="Due date"><select name="bk" title="Bank account (invoice par)">'+bopts()+'</select><div style="display:flex;gap:8px"><button class="btn" type="submit">Invoice banayein</button><button class="btn del" type="button" onclick="document.getElementById(\'tinvBox\').remove()">Abhi nahi</button></div></form></div>';
+ document.body.appendChild(d);
+ document.getElementById('tinvF').onsubmit=function(e){var o=fd(e);
+  var i=mkInv(c.id,o.desc,+o.amt,+o.gst,o.date,o.due,o.tt),sv=D.svcs.find(function(x){return x.id==o.svcid});
+  i.sac=sv?sv.sac:'';i.bk=o.bk;i.tid=t.id;t.inv=i.id;
+  save();d.remove();render();
+  if(confirm('Invoice '+i.no+' ban gaya. Abhi print karein?'))prI(i.id);return false}
+}
+
+/* ===== Edit Invoice ===== */
+function editI(id){
+ var i=D.inv.find(function(x){return x.id==id});if(!i)return;
+ var old=document.getElementById('einvBox');if(old)old.remove();
+ var co=copts().replace('value="'+i.cid+'"','value="'+i.cid+'" selected');
+ var g=String(i.gst);
+ var go=[['18','GST 18%'],['12','GST 12%'],['5','GST 5%'],['0','No GST']];if(!go.some(function(x){return x[0]==g}))go.push([g,'GST '+g+'%']);
+ go=go.map(function(x){return '<option value="'+x[0]+'"'+(x[0]==g?' selected':'')+'>'+x[1]+'</option>'}).join('');
+ var tt=i.tt||autoTT(i.cid);
+ var to='<option value="C"'+(tt=='C'?' selected':'')+'>CGST + SGST</option><option value="I"'+(tt=='I'?' selected':'')+'>IGST</option>';
+ var bo=bopts();if(i.bk)bo=bo.replace('value="'+i.bk+'"','value="'+i.bk+'" selected');
+ var d=document.createElement('div');d.id='einvBox';
+ d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+ d.innerHTML='<div class="card" style="width:100%;max-width:460px;max-height:92vh;overflow:auto;margin:0"><h2>Edit Invoice '+esc(i.no)+'</h2><form id="einvF" style="display:grid;gap:8px"><select name="cid">'+co+'</select><select name="svcid" onchange="svcPick(this)"><option value="">\u2014 Service chunein / custom \u2014</option>'+sopts()+'</select><input name="desc" placeholder="Service / description" required value="'+esc(i.desc)+'"><input name="sac" placeholder="SAC code (optional)" value="'+esc(i.sac||'')+'"><input name="amt" type="number" step="0.01" placeholder="Amount (GST se pehle)" required value="'+esc(i.amt)+'"><select name="gst">'+go+'</select><select name="tt">'+to+'</select><input name="date" type="date" required value="'+esc(i.date)+'"><input name="due" type="date" title="Due date" value="'+esc(i.due||'')+'"><select name="bk" title="Bank account (invoice par)">'+bo+'</select><label class="mu" style="margin-bottom:-4px">Terms &amp; Conditions (har line = ek point)</label><textarea name="terms" rows="5">'+esc(i.terms||curTerms())+'</textarea><div style="display:flex;gap:8px"><button class="btn" type="submit">Update</button><button class="btn del" type="button" onclick="document.getElementById(\'einvBox\').remove()">Cancel</button></div></form></div>';
+ document.body.appendChild(d);
+ document.getElementById('einvF').onsubmit=function(e){var o=fd(e),sv=D.svcs.find(function(x){return x.id==o.svcid});
+  i.cid=o.cid;i.desc=o.desc;i.amt=+o.amt;i.gst=+o.gst;i.tax=Math.round(i.amt*i.gst/100);i.total=i.amt+i.tax;
+  i.tt=o.tt;i.date=o.date;i.due=o.due;i.bk=o.bk;i.terms=(o.terms||'').trim()==curTerms().trim()?'':(o.terms||'').trim();i.sac=sv&&sv.sac?sv.sac:o.sac;
+  save();d.remove();render();
+  if(confirm('Invoice '+i.no+' update ho gaya. Abhi print karein?'))prI(i.id);return false}
+}
+
+/* ===== Edit Client ===== */
+function editC(id){
+ var c=D.clients.find(function(x){return x.id==id});if(!c)return;
+ var old=document.getElementById('ecBox');if(old)old.remove();
+ var sv=['ITR Filing','GST','Audit','TDS','ROC / Company','Other'];if(c.svc&&sv.indexOf(c.svc)<0)sv.push(c.svc);
+ var so=sv.map(function(x){return '<option'+(x==c.svc?' selected':'')+'>'+esc(x)+'</option>'}).join('');
+ var g=String(c.gst==null?18:c.gst);
+ var go=[['18','GST 18%'],['12','GST 12%'],['5','GST 5%'],['0','No GST']].map(function(x){return '<option value="'+x[0]+'"'+(x[0]==g?' selected':'')+'>'+x[1]+'</option>'}).join('');
+ var L=function(t){return '<label class="mu" style="margin-bottom:-4px">'+t+'</label>'};
+ var d=document.createElement('div');d.id='ecBox';
+ d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+ d.innerHTML='<div class="card" style="width:100%;max-width:480px;max-height:92vh;overflow:auto;margin:0"><h2>Edit Client</h2><form id="ecF" style="display:grid;gap:8px;grid-template-columns:1fr">'+L('Client name')+'<input name="name" required value="'+esc(c.name)+'">'+L('PAN')+'<input name="pan" maxlength="10" style="text-transform:uppercase" value="'+esc(c.pan||'')+'">'+L('GST Number')+'<input name="gstin" maxlength="15" style="text-transform:uppercase" value="'+esc(c.gstin||'')+'">'+L('Address')+'<input name="addr" value="'+esc(c.addr||'')+'">'+L('Phone')+'<input name="ph" value="'+esc(c.ph||'')+'">'+L('Email')+'<input name="em" value="'+esc(c.em||'')+'">'+L('Service')+'<select name="svc">'+so+'</select>'+L('Fee (\u20b9)')+'<input name="fee" type="number" step="any" value="'+esc(c.fee==null?'':c.fee)+'">'+L('GST on fee')+'<select name="gst">'+go+'</select>'+L('Opening balance (\u20b9)')+'<input name="ob" type="number" step="any" value="'+esc(c.ob||0)+'"><div style="display:flex;gap:8px"><button class="btn" type="submit">Update</button><button class="btn del" type="button" onclick="document.getElementById(\'ecBox\').remove()">Cancel</button></div></form></div>';
+ document.body.appendChild(d);
+ document.getElementById('ecF').onsubmit=function(e){var o=fd(e);
+  o.gstin=(o.gstin||'').trim().toUpperCase();
+  if(o.gstin&&!gOk(o.gstin)&&!confirm('GSTIN galat lag raha hai (format/checksum). Phir bhi save karein?'))return false;
+  if(o.gstin&&o.gstin.length==15&&!o.pan)o.pan=o.gstin.slice(2,12);
+  o.pan=(o.pan||'').toUpperCase();
+  if(o.gstin!==(c.gstin||''))c.gs='';
+  ['name','pan','gstin','addr','ph','em','svc','fee','gst'].forEach(function(k){c[k]=o[k]});
+  c.ob=+o.ob||0;
+  save();d.remove();render();return false}
+}
+
+/* ===== Invoice settings: Logo + Terms & Conditions ===== */
+var DEF_TERMS=['Payment is due on or before the due date mentioned on this invoice.','Cheque / DD to be drawn in favour of "Kinja Associates", or pay online to the bank account shown above.','Fees once paid are non-refundable. GST is charged as applicable.','All disputes are subject to local jurisdiction only.'].join('\n');
+function curTerms(){var t=(D.set||{}).terms;return t==null?DEF_TERMS:t}
+function termsBlock(i){var L=(i.terms||curTerms()).split('\n').map(function(x){return x.trim()}).filter(Boolean);if(!L.length)return '';
+ return '<div style="font-size:12px;margin-top:8px"><b>Terms &amp; Conditions</b><ol style="margin:4px 0 0 18px;padding:0">'+L.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol></div>'}
+function logoImg(){var s=D.set||{};return s.logo?'<img src="'+s.logo+'" alt="" style="max-height:'+(+s.logoH||70)+'px;max-width:100%;margin-bottom:4px"><br>':''}
+function setLogo(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert('Image file chunein (PNG/JPG)');return}
+ var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,400/im.width,200/im.height),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  D.set=D.set||{};D.set.logo=c.toDataURL('image/png');save();render()};im.onerror=function(){alert('Image padh nahi paye')};im.src=r.result};r.readAsDataURL(f)}
+function rmLogo(){if(confirm('Logo hatayein?')){D.set=D.set||{};D.set.logo='';save();render()}}
+function saveLogoH(){D.set=D.set||{};D.set.logoH=Math.min(200,Math.max(20,+document.getElementById('logoH').value||70));save();render()}
+function saveTerms(){D.set=D.set||{};D.set.terms=document.getElementById('termsTx').value.trim();save();render();alert('Terms save ho gaye')}
+function resetTerms(){if(confirm('Terms default par wapas karein?')){D.set=D.set||{};delete D.set.terms;save();render()}}
+function invSetCard(){var s=D.set||{};
+ return '<div class="card"><h2>\ud83e\uddfe Invoice Settings</h2>'+
+ '<div style="margin-bottom:14px"><b>Logo</b> <span class="mu">(invoice ke upar dikhega)</span><div style="margin:8px 0">'+(s.logo?'<img src="'+s.logo+'" alt="logo" style="max-height:'+(+s.logoH||70)+'px;max-width:100%;background:#fff;padding:4px;border:1px solid var(--br);border-radius:8px">':'<span class="mu">Abhi logo nahi hai</span>')+'</div>'+
+ '<div class="rctl"><input type="file" accept="image/*" onchange="setLogo(this)" style="max-width:260px">'+(s.logo?'<button class="btn sm del" onclick="rmLogo()">Logo hatayein</button>':'')+'<span class="mu">Logo height (px):</span><input id="logoH" type="number" min="20" max="200" value="'+(+s.logoH||70)+'" style="width:90px"><button class="btn sm" onclick="saveLogoH()">Set</button></div></div>'+
+ '<div><b>Terms &amp; Conditions</b> <span class="mu">(har line ek point, invoice par 1, 2, 3, 4... number ke saath aayega)</span><textarea id="termsTx" rows="6" style="margin:8px 0">'+esc(curTerms())+'</textarea><div class="rctl"><button class="btn" onclick="saveTerms()">Save Terms</button><button class="btn sm" onclick="resetTerms()">Default par wapas</button></div><div class="mu" style="margin-top:6px">Kisi ek invoice ke liye alag terms chahiye to Invoices me us invoice ka Edit dabaiye.</div></div></div>'}
+var _vSet=vSet;vSet=function(){return invSetCard()+_vSet()};
+</script></body></html>
